@@ -13,6 +13,7 @@ import mentor from './mentor';
 import mentors from './mentors';
 import mentorPanel from './mentor-panel';
 import mentorExport from './mentor-export';
+import v1MentorExport from './v1-mentor-export';
 import mentorImportPreview from './mentor-import-preview';
 import question from './question';
 import questions from './questions';
@@ -35,6 +36,7 @@ export default new GraphQLObjectType({
     mentors,
     mentorPanel,
     mentorExport,
+    v1MentorExport,
     mentorImportPreview,
     question,
     questions,
