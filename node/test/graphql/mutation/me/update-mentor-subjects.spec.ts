@@ -110,9 +110,7 @@ describe('updateMentorSubjects', () => {
             me {
               mentor {
                 _id
-                defaultSubject {
-                  _id
-                }
+                defaultSubject
                 subjects {
                   _id
                 }
@@ -123,9 +121,7 @@ describe('updateMentorSubjects', () => {
     expect(mentor.status).to.equal(200);
     expect(mentor.body.data.me.mentor).to.eql({
       _id: '5ffdf41a1ee2c62111111111',
-      defaultSubject: {
-        _id: '5ffdf41a1ee2c62320b49eb3',
-      },
+      defaultSubject: '5ffdf41a1ee2c62320b49eb3',
       subjects: [
         {
           _id: '5ffdf41a1ee2c62320b49eb3',
@@ -165,9 +161,7 @@ describe('updateMentorSubjects', () => {
             me {
               mentor {
                 _id
-                defaultSubject {
-                  _id
-                }
+                defaultSubject
                 subjects {
                   _id
                 }
@@ -213,9 +207,7 @@ describe('updateMentorSubjects', () => {
             me {
               mentor {
                 _id
-                defaultSubject {
-                  _id
-                }
+                defaultSubject
                 subjects {
                   _id
                 }
@@ -226,9 +218,7 @@ describe('updateMentorSubjects', () => {
     expect(mentor.status).to.equal(200);
     expect(mentor.body.data.me.mentor).to.eql({
       _id: '5ffdf41a1ee2c62111111111',
-      defaultSubject: {
-        _id: '5ffdf41a1ee2c62320b49eb2',
-      },
+      defaultSubject: '5ffdf41a1ee2c62320b49eb2',
       subjects: [
         {
           _id: '5ffdf41a1ee2c62320b49eb2',

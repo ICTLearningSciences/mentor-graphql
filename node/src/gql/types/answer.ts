@@ -11,7 +11,6 @@ import {
   GraphQLList,
   GraphQLBoolean,
 } from 'graphql';
-import { questionField } from 'gql/query/question';
 import { AnswerMedia } from 'models/Answer';
 import { toAbsoluteUrl } from 'utils/static-urls';
 import DateType from './date';
@@ -35,7 +34,7 @@ export const AnswerType = new GraphQLObjectType({
   name: 'Answer',
   fields: () => ({
     _id: { type: GraphQLID },
-    question: questionField,
+    question: { type: GraphQLID },
     transcript: { type: GraphQLString },
     status: { type: GraphQLString },
     hasUntransferredMedia: { type: GraphQLBoolean },

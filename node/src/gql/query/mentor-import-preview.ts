@@ -4,127 +4,24 @@ Permission to use, copy, modify, and distribute this software and its documentat
 
 The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 */
-import {
-  GraphQLBoolean,
-  GraphQLID,
-  GraphQLList,
-  GraphQLNonNull,
-  GraphQLObjectType,
-  GraphQLString,
-} from 'graphql';
+import { GraphQLID, GraphQLNonNull, GraphQLObjectType } from 'graphql';
 import {
   Mentor as MentorModel,
   Subject as SubjectModel,
   Question as QuestionModel,
   Answer as AnswerModel,
 } from 'models';
-import { Subject } from 'models/Subject';
 import { Question } from 'models/Question';
 import { Answer } from 'models/Answer';
-import {
-  AnswerUpdateInput,
-  MentorImportJson,
-  MentorImportJsonType,
-} from 'gql/mutation/me/mentor-import';
-import SubjectType, { CategoryType, TopicType } from 'gql/types/subject';
-import QuestionType from 'gql/types/question';
-import AnswerType from 'gql/types/answer';
-import { SubjectUpdateInput } from 'gql/mutation/me/subject-update';
-import { QuestionUpdateInput } from 'gql/mutation/me/question-update';
 import { isId } from 'gql/mutation/me/helpers';
 import { mediaNeedsTransfer } from 'utils/static-urls';
-
-enum EditType {
-  NONE = 'NONE',
-  ADDED = 'ADDED',
-  REMOVED = 'REMOVED',
-  CREATED = 'CREATED',
-}
-interface ImportPreview<T, U> {
-  importData?: T;
-  curData?: U;
-  editType: EditType;
-}
-interface MentorImportPreview {
-  id: string;
-  subjects: ImportPreview<SubjectUpdateInput, Subject>[];
-  questions: ImportPreview<QuestionUpdateInput, Question>[];
-  answers: ImportPreview<AnswerUpdateInput, Answer>[];
-}
-
-export const MentorImportPreviewType = new GraphQLObjectType({
-  name: 'MentorImportPreviewType',
-  fields: () => ({
-    id: { type: GraphQLString },
-    subjects: { type: GraphQLList(SubjectImportPreviewType) },
-    questions: { type: GraphQLList(QuestionImportPreviewType) },
-    answers: { type: GraphQLList(AnswerImportPreviewType) },
-  }),
-});
-export const SubjectImportPreviewType = new GraphQLObjectType({
-  name: 'SubjectImportPreviewType',
-  fields: () => ({
-    importData: { type: SubjectPreviewType },
-    curData: { type: SubjectType },
-    editType: { type: GraphQLString },
-  }),
-});
-export const QuestionImportPreviewType = new GraphQLObjectType({
-  name: 'QuestionImportPreviewType',
-  fields: () => ({
-    importData: { type: QuestionType },
-    curData: { type: QuestionType },
-    editType: { type: GraphQLString },
-  }),
-});
-export const AnswerImportPreviewType = new GraphQLObjectType({
-  name: 'AnswerImportPreviewType',
-  fields: () => ({
-    importData: { type: AnswerPreviewType },
-    curData: { type: AnswerType },
-    editType: { type: GraphQLString },
-  }),
-});
-
-export const SubjectPreviewType = new GraphQLObjectType({
-  name: 'SubjectPreview',
-  fields: () => ({
-    _id: { type: GraphQLID },
-    name: { type: GraphQLString },
-    description: { type: GraphQLString },
-    isRequired: { type: GraphQLBoolean },
-    topics: { type: GraphQLList(TopicType) },
-    categories: { type: GraphQLList(CategoryType) },
-    questions: { type: GraphQLList(SubjectQuestionPreviewType) },
-  }),
-});
-export const SubjectQuestionPreviewType = new GraphQLObjectType({
-  name: 'SubjectQuestionPreview',
-  fields: {
-    category: { type: CategoryType },
-    topics: { type: GraphQLList(TopicType) },
-    question: { type: QuestionType },
-  },
-});
-export const AnswerPreviewType = new GraphQLObjectType({
-  name: 'AnswerPreview',
-  fields: () => ({
-    question: { type: QuestionType },
-    transcript: { type: GraphQLString },
-    status: { type: GraphQLString },
-    hasUntransferredMedia: { type: GraphQLBoolean },
-    media: { type: GraphQLList(AnswerMediaPreviewType) },
-  }),
-});
-export const AnswerMediaPreviewType = new GraphQLObjectType({
-  name: 'AnswerMediaPreview',
-  fields: {
-    type: { type: GraphQLString },
-    tag: { type: GraphQLString },
-    needsTransfer: { type: GraphQLBoolean },
-    url: { type: GraphQLString },
-  },
-});
+import {
+  MentorImportPreviewType,
+  MentorImportPreview,
+  EditType,
+  MentorImportJsonType,
+} from 'gql/types/import';
+import { MentorExportJson } from 'gql/types/export';
 
 export const mentorImportPreview = {
   type: MentorImportPreviewType,
@@ -134,7 +31,7 @@ export const mentorImportPreview = {
   },
   resolve: async (
     _root: GraphQLObjectType,
-    args: { mentor: string; json: MentorImportJson }
+    args: { mentor: string; json: MentorExportJson }
   ): Promise<MentorImportPreview> => {
     const importJson = args.json;
     const exportJson = await MentorModel.export(args.mentor);
@@ -246,9 +143,12 @@ export const mentorImportPreview = {
     );
     return {
       id: exportJson.id,
-      subjects: subjectChanges,
-      questions: questionChanges,
-      answers: answerChanges,
+      subjects: [],
+      questions: [],
+      answers: [],
+      // subjects: subjectChanges,
+      // questions: questionChanges,
+      // answers: answerChanges,
     };
   },
 };

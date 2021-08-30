@@ -71,13 +71,13 @@ describe('import mentor', () => {
           isRequired: true,
           topics: [
             {
-              id: '5ffdf41a1ee2c62320b49ec2',
+              id: 'background',
               name: 'Background',
               description:
                 'These questions will ask general questions about your background, that might be relevant to how people understand your career',
             },
             {
-              id: '5ffdf41a1ee2c62320b49ec3',
+              id: 'advice',
               name: 'Advice',
               description:
                 'These questions will ask you to give advice to someone who is interested in your career',
@@ -97,7 +97,7 @@ describe('import mentor', () => {
                 question: 'Who are you and what do you do?',
               },
               category: null,
-              topics: [{ id: '5ffdf41a1ee2c62320b49ec2' }],
+              topics: [{ id: 'background' }],
             },
             {
               question: {
@@ -105,7 +105,7 @@ describe('import mentor', () => {
                 question: 'How old are you?',
               },
               category: { id: 'category' },
-              topics: [{ id: '5ffdf41a1ee2c62320b49ec2' }],
+              topics: [{ id: 'background' }],
             },
             {
               question: {
@@ -113,7 +113,7 @@ describe('import mentor', () => {
                 question: 'Do you like your job?',
               },
               category: null,
-              topics: [{ id: '5ffdf41a1ee2c62320b49ec3' }],
+              topics: [{ id: 'advice' }],
             },
             {
               question: { _id: '511111111111111111111116', question: 'Julia?' },
@@ -138,7 +138,7 @@ describe('import mentor', () => {
           isRequired: true,
           topics: [
             {
-              id: '5ffdf41a1ee2c62320b49ec1',
+              id: 'idle',
               name: 'Idle',
               description: '30-second idle clip',
             },
@@ -151,7 +151,7 @@ describe('import mentor', () => {
                 question: "Don't talk and stay still.",
               },
               category: null,
-              topics: [{ id: '5ffdf41a1ee2c62320b49ec1' }],
+              topics: [{ id: 'idle' }],
             },
           ],
         },
@@ -294,13 +294,13 @@ describe('import mentor', () => {
           isRequired: true,
           topics: [
             {
-              id: '5ffdf41a1ee2c62320b49ec2',
+              id: 'background',
               name: 'Background',
               description:
                 'These questions will ask general questions about your background, that might be relevant to how people understand your career',
             },
             {
-              id: '5ffdf41a1ee2c62320b49ec3',
+              id: 'advice',
               name: 'Advice',
               description:
                 'These questions will ask you to give advice to someone who is interested in your career',
@@ -320,7 +320,7 @@ describe('import mentor', () => {
                 question: 'Who are you and what do you do?',
               },
               category: null,
-              topics: [{ id: '5ffdf41a1ee2c62320b49ec2' }],
+              topics: [{ id: 'background' }],
             },
             {
               question: {
@@ -328,7 +328,7 @@ describe('import mentor', () => {
                 question: 'How old are you?',
               },
               category: { id: 'category' },
-              topics: [{ id: '5ffdf41a1ee2c62320b49ec2' }],
+              topics: [{ id: 'background' }],
             },
             {
               question: {
@@ -336,7 +336,7 @@ describe('import mentor', () => {
                 question: 'Do you like your job?',
               },
               category: null,
-              topics: [{ id: '5ffdf41a1ee2c62320b49ec3' }],
+              topics: [{ id: 'advice' }],
             },
             {
               question: { _id: '511111111111111111111116', question: 'Julia?' },
@@ -361,7 +361,7 @@ describe('import mentor', () => {
           isRequired: true,
           topics: [
             {
-              id: '5ffdf41a1ee2c62320b49ec1',
+              id: 'idle',
               name: 'Idle',
               description: '30-second idle clip',
             },
@@ -374,7 +374,7 @@ describe('import mentor', () => {
                 question: "Don't talk and stay still.",
               },
               category: null,
-              topics: [{ id: '5ffdf41a1ee2c62320b49ec1' }],
+              topics: [{ id: 'idle' }],
             },
           ],
         },

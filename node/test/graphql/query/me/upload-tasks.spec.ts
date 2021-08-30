@@ -32,10 +32,7 @@ describe('query me/uploadTasks', () => {
         query: `query {
           me {
             uploadTasks {
-              question {
-                _id
-                question
-              }
+              question
               uploadStatus
               transcript
               media {
@@ -63,13 +60,8 @@ describe('query me/uploadTasks', () => {
         query: `query {
             me {
               uploadTasks {
-                mentor {
-                  _id
-                }
-                question {
-                  _id
-                  question
-                }
+                mentor
+                question
                 uploadStatus
                 transcript
                 media {
@@ -84,13 +76,8 @@ describe('query me/uploadTasks', () => {
     expect(response.status).to.equal(200);
     expect(response.body.data.me.uploadTasks).to.eql([
       {
-        mentor: {
-          _id: '5ffdf41a1ee2c62111111111',
-        },
-        question: {
-          _id: '511111111111111111111112',
-          question: 'Who are you and what do you do?',
-        },
+        mentor: '5ffdf41a1ee2c62111111111',
+        question: '511111111111111111111112',
         uploadStatus: 'TRANSCRIBE_IN_PROGRESS',
         transcript: null,
         media: [],

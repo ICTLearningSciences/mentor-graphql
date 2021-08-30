@@ -4,36 +4,9 @@ Permission to use, copy, modify, and distribute this software and its documentat
 
 The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 */
-import {
-  GraphQLID,
-  GraphQLList,
-  GraphQLNonNull,
-  GraphQLObjectType,
-} from 'graphql';
-import AnswerType from 'gql/types/answer';
-import SubjectType from 'gql/types/subject';
-import QuestionType from 'gql/types/question';
+import { GraphQLID, GraphQLNonNull, GraphQLObjectType } from 'graphql';
 import { Mentor as MentorModel } from 'models';
-import { Answer } from 'models/Answer';
-import { Subject } from 'models/Subject';
-import { Question } from 'models/Question';
-
-export interface MentorExportJson {
-  id: string;
-  subjects: Subject[];
-  questions: Question[];
-  answers: Answer[];
-}
-
-export const MentorExportJsonType = new GraphQLObjectType({
-  name: 'MentorExportJsonType',
-  fields: () => ({
-    id: { type: GraphQLID },
-    subjects: { type: GraphQLList(SubjectType) },
-    questions: { type: GraphQLList(QuestionType) },
-    answers: { type: GraphQLList(AnswerType) },
-  }),
-});
+import { MentorExportJsonType, MentorExportJson } from 'gql/types/export';
 
 export const exportMentor = {
   type: MentorExportJsonType,

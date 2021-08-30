@@ -17,13 +17,17 @@ import {
   pluginPagination,
 } from './Paginatation';
 import { Answer, Status } from './Answer';
-import { QuestionType } from './Question';
-import { Subject, SubjectQuestion, Topic } from './Subject';
+import { Question, QuestionType } from './Question';
+import { Subject, SubjectQuestion } from './Subject';
 import { User } from './User';
-import { MentorExportJson } from 'gql/query/mentor-export';
-import { MentorImportJson } from 'gql/mutation/me/mentor-import';
 import { idOrNew } from 'gql/mutation/me/helpers';
 import { mediaNeedsTransfer, toRelativeUrl } from 'utils/static-urls';
+import {
+  AnswerExportJson,
+  MentorExportJson,
+  QuestionExportJson,
+  SubjectExportJson,
+} from 'gql/types/export';
 
 export enum MentorType {
   VIDEO = 'VIDEO',
@@ -61,30 +65,9 @@ export interface MentorModel extends Model<Mentor> {
     options?: PaginateOptions
   ): Promise<PaginatedResolveResult<Mentor>>;
   getSubjects(mentor: string | Mentor): Subject[];
-  getTopics({
-    mentor,
-    defaultSubject,
-    subjectId,
-  }: GetMentorDataParams): Topic[];
-  getQuestions({
-    mentor,
-    defaultSubject,
-    subjectId,
-    topicId,
-    type,
-    categoryId,
-  }: GetMentorDataParams): SubjectQuestion[];
-  getAnswers({
-    mentor,
-    defaultSubject,
-    subjectId,
-    topicId,
-    status,
-    type,
-    categoryId,
-  }: GetMentorDataParams): Answer[];
+  getAnswers(mentor: string | Mentor): Answer[];
   export(mentor: string): Promise<MentorExportJson>;
-  import(mentor: string, json: MentorImportJson): Promise<Mentor>;
+  import(mentor: string, json: MentorExportJson): Promise<Mentor>;
 }
 
 export const MentorSchema = new Schema<Mentor, MentorModel>(
@@ -94,7 +77,7 @@ export const MentorSchema = new Schema<Mentor, MentorModel>(
     title: { type: String },
     email: { type: String },
     thumbnail: { type: String, default: '' },
-    allowContact: { type: Boolean },
+    allowContact: { type: Boolean, default: false },
     defaultSubject: { type: Schema.Types.ObjectId, ref: 'Subject' },
     subjects: { type: [{ type: Schema.Types.ObjectId, ref: 'Subject' }] },
     lastTrainedAt: { type: Date },
@@ -121,20 +104,14 @@ MentorSchema.statics.export = async function (
   if (!mentor) {
     throw new Error('mentor not found');
   }
-  const subjects = await SubjectModel.find(
-    {
-      _id: { $in: mentor.subjects },
-    },
-    null,
-    { sort: { name: 1 } }
-  );
+  const subjects = await this.getSubjects(mentor);
   const sQuestions: SubjectQuestion[] = subjects.reduce(
     (accumulator, subject) => {
       return accumulator.concat(subject.questions);
     },
     []
   );
-  const questions = await QuestionModel.find({
+  const questions: Question[] = await QuestionModel.find({
     _id: { $in: sQuestions.map((q) => q.question) },
     $or: [
       { mentor: mentor._id },
@@ -146,17 +123,46 @@ MentorSchema.statics.export = async function (
     mentor: mentor._id,
     question: { $in: questions.map((q) => q._id) },
   });
+
+  const subjectExports: SubjectExportJson[] = subjects.map((s) => {
+    return {
+      ...s,
+      _id: s._id,
+      questions: s.questions.map((sq) => {
+        const question = questions.find((q) => `${q._id}` === `${sq.question}`);
+        return {
+          question: { ...question, _id: question._id },
+          category: s.categories.find((c) => c.id === sq.category),
+          topics: s.topics.filter((t) => sq.topics.includes(t.id)),
+        };
+      }),
+    };
+  });
+  const answerExports: AnswerExportJson[] = answers.map((a) => {
+    const question = questions.find((q) => `${q._id}` === `${a.question}`);
+    return {
+      ...a,
+      _id: a._id,
+      question: { ...question, _id: question._id },
+    };
+  });
+  const questionExports: QuestionExportJson[] = questions.map((q) => {
+    return {
+      ...q,
+      _id: q._id,
+    };
+  });
   return {
     id: mentor._id,
-    subjects,
-    questions,
-    answers,
+    subjects: subjectExports,
+    questions: questionExports,
+    answers: answerExports,
   };
 };
 
 MentorSchema.statics.import = async function (
   m: string | Mentor,
-  json: MentorImportJson
+  json: MentorExportJson
 ): Promise<Mentor> {
   const mentor: Mentor = typeof m === 'string' ? await this.findById(m) : m;
   if (!mentor) {
@@ -262,105 +268,19 @@ MentorSchema.statics.getSubjects = async function (
   );
 };
 
-// Return topics for all subjects or for one subject
-//  - one subject: sorted in subject order
-//  - all subjects: sorted alphabetically
-MentorSchema.statics.getTopics = async function ({
-  mentor,
-  defaultSubject,
-  subjectId,
-}: GetMentorDataParams): Promise<Topic[]> {
-  const userMentor: Mentor =
-    typeof mentor === 'string' ? await this.findById(mentor) : mentor;
-  if (!userMentor) {
-    throw new Error(`mentor ${mentor} not found`);
+MentorSchema.statics.getAnswers = async function (m: string | Mentor) {
+  const mentor: Mentor = typeof m === 'string' ? await this.findById(m) : m;
+  if (!mentor) {
+    throw new Error(`mentor ${m} not found`);
   }
-  const topics: Topic[] = [];
-  subjectId = defaultSubject ? userMentor.defaultSubject : subjectId;
-  if (subjectId) {
-    if (userMentor.subjects.includes(subjectId)) {
-      const subject = await SubjectModel.findById(subjectId);
-      topics.push(...subject.topics);
-    }
-  } else {
-    const subjects: Subject[] = await this.getSubjects(userMentor);
-    for (const s of subjects) {
-      topics.push(...s.topics);
-    }
-    topics.sort((a, b) => {
-      return a.name.localeCompare(b.name);
-    });
-  }
-  const topicsIds = [...new Set(topics.map((t) => `${t.id}`))];
-  return topicsIds.map((tId) => topics.find((t) => `${t.id}` === tId));
-};
-
-MentorSchema.statics.getQuestions = async function ({
-  mentor,
-  defaultSubject,
-  subjectId,
-  topicId,
-  type,
-  categoryId,
-}: GetMentorDataParams): Promise<SubjectQuestion[]> {
-  const userMentor: Mentor =
-    typeof mentor === 'string' ? await this.findById(mentor) : mentor;
-  if (!userMentor) {
-    throw new Error(`mentor ${mentor} not found`);
-  }
-  subjectId = defaultSubject ? userMentor.defaultSubject : subjectId;
-  const subjectIds = subjectId
-    ? userMentor.subjects.includes(subjectId)
-      ? [subjectId]
-      : []
-    : (userMentor.subjects as string[]);
-  if (subjectIds.length == 0) {
-    return [];
-  }
-  const subjects = await SubjectModel.find({ _id: { $in: subjectIds } }, null, {
-    sort: { name: 1 },
-  });
-  // TODO: explore whether can batch all calls below
-  // into a single mongo query?
-  return (
-    await Promise.all(
-      subjects.map((s) =>
-        SubjectModel.getQuestions(s, topicId, userMentor._id, type, categoryId)
-      )
-    )
-  ).reduce((acc: SubjectQuestion[], cur: SubjectQuestion[]) => {
-    acc.push(...cur);
-    return acc;
-  }, [] as SubjectQuestion[]);
-};
-
-MentorSchema.statics.getAnswers = async function ({
-  mentor,
-  defaultSubject,
-  subjectId,
-  topicId,
-  status,
-  type,
-  categoryId,
-}: GetMentorDataParams) {
-  const userMentor: Mentor =
-    typeof mentor === 'string' ? await this.findById(mentor) : mentor;
-  if (!userMentor) {
-    throw new Error(`mentor ${mentor} not found`);
-  }
-  const sQuestions = await this.getQuestions({
-    mentor: userMentor,
-    defaultSubject: defaultSubject,
-    subjectId: subjectId,
-    topicId: topicId,
-    type: type,
-    categoryId: categoryId,
-  });
-  const questionIds = sQuestions.map(
-    (sq: { question: { _id: string } }) => sq.question._id
-  );
+  const subjects = await this.getSubjects(mentor);
+  const questionIds = subjects
+    .reduce((accumulator, subject) => {
+      return accumulator.concat(subject.questions);
+    }, [])
+    .map((sq) => sq.question);
   const answers: Answer[] = await AnswerModel.find({
-    mentor: userMentor._id,
+    mentor: mentor._id,
     question: { $in: questionIds },
   });
   answers.sort((a: Answer, b: Answer) => {
@@ -372,19 +292,16 @@ MentorSchema.statics.getAnswers = async function ({
     acc[`${cur.question}`] = cur;
     return acc;
   }, {});
-  const answerResult = questionIds.map((qid: string) => {
+  return questionIds.map((qid: string) => {
     return (
       answersByQid[`${qid}`] || {
-        mentor: userMentor._id,
+        mentor: mentor._id,
         question: qid,
         transcript: '',
         status: Status.INCOMPLETE,
       }
     );
   });
-  return status
-    ? answerResult.filter((a: Answer) => a.status === status)
-    : answerResult;
 };
 
 MentorSchema.index({ name: -1, _id: -1 });

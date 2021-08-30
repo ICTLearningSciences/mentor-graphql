@@ -127,260 +127,6 @@ describe('mentor', () => {
     });
   });
 
-  it('mentor/topics gets all topics for mentor in alphabetical order', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111112") {
-          topics {
-            name
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      topics: [
-        {
-          name: 'Advice',
-        },
-        {
-          name: 'Background',
-        },
-        {
-          name: 'Idle',
-        },
-      ],
-    });
-  });
-
-  it('mentor/topics gets topics in default subject in subject order', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111112") {
-          topics(useDefaultSubject: true) {
-            name
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      topics: [
-        {
-          name: 'Background',
-        },
-        {
-          name: 'Advice',
-        },
-      ],
-    });
-  });
-
-  it('mentor/topics gets topics in subject in subject order', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111112") {
-          topics(subject: "5ffdf41a1ee2c62320b49eb2") {
-            name
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      topics: [
-        {
-          name: 'Background',
-        },
-        {
-          name: 'Advice',
-        },
-      ],
-    });
-  });
-
-  it('mentor/topics fails to get topics in subject mentor does not have', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111111") {
-          topics(subject: "5ffdf41a1ee2c62320b49eb3") {
-            name
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      topics: [],
-    });
-  });
-
-  it('mentor/questions gets all questions for mentor', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111111") {
-          questions {
-            question {
-              question
-            }
-            topics {
-              name
-            }
-            category {
-              name
-            }
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor.questions).to.eql([
-      {
-        question: {
-          question: 'Who are you and what do you do?',
-        },
-        category: null,
-        topics: [{ name: 'Background' }],
-      },
-      {
-        question: {
-          question: 'How old are you?',
-        },
-        category: { name: 'Category' },
-        topics: [{ name: 'Background' }],
-      },
-      {
-        question: {
-          question: 'Do you like your job?',
-        },
-        category: null,
-        topics: [{ name: 'Advice' }],
-      },
-      {
-        question: {
-          question: 'What is Aaron like?',
-        },
-        category: {
-          name: 'Category',
-        },
-        topics: [],
-      },
-      {
-        question: {
-          question: "Don't talk and stay still.",
-        },
-        category: null,
-        topics: [{ name: 'Idle' }],
-      },
-    ]);
-  });
-
-  it('mentor/questions gets all questions in default subject for mentor', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111111") {
-          questions(useDefaultSubject: true) {
-            question {
-              question
-            }
-            topics {
-              name
-            }
-            category {
-              name
-            }
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor.questions).to.eql([
-      {
-        question: {
-          question: "Don't talk and stay still.",
-        },
-        category: null,
-        topics: [{ name: 'Idle' }],
-      },
-    ]);
-  });
-
-  it('mentor/questions gets all questions in subject for mentor', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111111") {
-          questions(subject: "5ffdf41a1ee2c62320b49eb1") {
-            question {
-              question
-            }
-            topics {
-              name
-            }
-            category {
-              name
-            }
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor.questions).to.eql([
-      {
-        question: {
-          question: "Don't talk and stay still.",
-        },
-        category: null,
-        topics: [{ name: 'Idle' }],
-      },
-    ]);
-  });
-
-  it('mentor/questions fails to get questions in subject mentor does not have', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111111") {
-          questions(subject: "5ffdf41a1ee2c62320b49eb3") {
-            question {
-              question
-            }
-            topics {
-              name
-            }
-            category {
-              name
-            }
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor.questions).to.eql([]);
-  });
-
   it('mentor/answers gets answers for all questions', async () => {
     const response = await request(app)
       .post('/graphql')
@@ -389,9 +135,7 @@ describe('mentor', () => {
         mentor(id: "5ffdf41a1ee2c62111111111") {
           name
           answers {
-            question {
-              question
-            }
+            question
             transcript
             status
           }
@@ -404,280 +148,34 @@ describe('mentor', () => {
       name: 'Clinton Anderson',
       answers: [
         {
-          question: {
-            question: 'Who are you and what do you do?',
-          },
+          question: '511111111111111111111112',
           transcript: '',
           status: 'INCOMPLETE',
         },
         {
-          question: {
-            question: 'How old are you?',
-          },
+          question: '511111111111111111111113',
           transcript: '',
           status: 'INCOMPLETE',
         },
         {
-          question: {
-            question: 'Do you like your job?',
-          },
+          question: '511111111111111111111114',
           transcript: '',
           status: 'INCOMPLETE',
         },
         {
-          question: {
-            question: 'What is Aaron like?',
-          },
+          question: '511111111111111111111116',
+          status: 'INCOMPLETE',
+          transcript: '',
+        },
+        {
+          question: '511111111111111111111117',
           status: 'COMPLETE',
           transcript: 'Test Transcript',
         },
         {
-          question: {
-            question: "Don't talk and stay still.",
-          },
+          question: '511111111111111111111111',
           transcript: '[being still]',
           status: 'COMPLETE',
-        },
-      ],
-    });
-  });
-
-  it('mentor/answers gets complete answers for all questions', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111111") {
-          name
-          answers(status: "COMPLETE") {
-            question {
-              question
-            }
-            transcript
-            status
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      name: 'Clinton Anderson',
-      answers: [
-        {
-          question: {
-            question: 'What is Aaron like?',
-          },
-          status: 'COMPLETE',
-          transcript: 'Test Transcript',
-        },
-        {
-          question: {
-            question: "Don't talk and stay still.",
-          },
-          transcript: '[being still]',
-          status: 'COMPLETE',
-        },
-      ],
-    });
-  });
-
-  it('mentor/answers gets answers for default subject', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111111") {
-          answers(useDefaultSubject: true) {
-            question {
-              question
-            }
-            transcript
-            status
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      answers: [
-        {
-          question: {
-            question: "Don't talk and stay still.",
-          },
-          transcript: '[being still]',
-          status: 'COMPLETE',
-        },
-      ],
-    });
-  });
-
-  it('mentor/answers gets answers for subject', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111111") {
-          answers(subject: "5ffdf41a1ee2c62320b49eb1") {
-            question {
-              question
-            }
-            transcript
-            status
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      answers: [
-        {
-          question: {
-            question: "Don't talk and stay still.",
-          },
-          transcript: '[being still]',
-          status: 'COMPLETE',
-        },
-      ],
-    });
-  });
-
-  it('mentor/answers fails to get answers for subject mentor does not have, including incomplete', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111111") {
-          answers(subject: "5ffdf41a1ee2c62320b49eb3") {
-            question {
-              question
-            }
-            transcript
-            status
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      answers: [],
-    });
-  });
-
-  it('mentor/answers gets answers for questions in topic, including incomplete', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111111") {
-          answers(topic: "5ffdf41a1ee2c62320b49ec3") {
-            question {
-              question
-            }
-            transcript
-            status
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      answers: [
-        {
-          question: {
-            question: 'Do you like your job?',
-          },
-          transcript: '',
-          status: 'INCOMPLETE',
-        },
-      ],
-    });
-  });
-
-  it('mentor/utterances gets all utterances, including incomplete', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111111") {
-          utterances {
-            question {
-              question
-            }
-            transcript
-            status
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      utterances: [
-        {
-          question: {
-            question: "Don't talk and stay still.",
-          },
-          transcript: '[being still]',
-          status: 'COMPLETE',
-        },
-      ],
-    });
-  });
-
-  it('mentor/answers gets mentor specific question for mentor', async () => {
-    const response = await request(app)
-      .post('/graphql')
-      .send({
-        query: `query {
-        mentor(id: "5ffdf41a1ee2c62111111112") {
-          name
-          answers {
-            question {
-              question
-            }
-          }
-        }
-      }
-    `,
-      });
-    expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      name: 'Julianne Nordhagen',
-      answers: [
-        {
-          question: {
-            question: 'Who are you and what do you do?',
-          },
-        },
-        {
-          question: {
-            question: 'How old are you?',
-          },
-        },
-        {
-          question: {
-            question: 'Do you like your job?',
-          },
-        },
-        {
-          question: {
-            question: 'Julia?',
-          },
-        },
-        {
-          question: {
-            question: 'What is Aaron like?',
-          },
-        },
-        {
-          question: {
-            question: "Don't talk and stay still.",
-          },
         },
       ],
     });
@@ -690,7 +188,7 @@ describe('mentor', () => {
         query: `query {
         mentor(id: "5ffdf41a1ee2c62111111111") {
           name
-          answers(status: "COMPLETE") {
+          answers {
             transcript
             media {
               type
@@ -703,41 +201,41 @@ describe('mentor', () => {
     `,
       });
     expect(response.status).to.equal(200);
-    expect(response.body.data.mentor).to.eql({
-      name: 'Clinton Anderson',
-      answers: [
-        {
-          transcript: 'Test Transcript',
-          media: [
-            {
-              type: 'video',
-              tag: 'web',
-              url: `${process.env.STATIC_URL_BASE}/videos/5ffdf41a1ee2c62111111111/511111111111111111111117/web.mp4`,
-            },
-            {
-              type: 'video',
-              tag: 'mobile',
-              url: `${process.env.STATIC_URL_BASE}/videos/5ffdf41a1ee2c62111111111/511111111111111111111117/mobile.mp4`,
-            },
-          ],
-        },
-        {
-          transcript: '[being still]',
-          media: [
-            {
-              type: 'video',
-              tag: 'web',
-              url: `${process.env.STATIC_URL_BASE}/videos/5ffdf41a1ee2c62111111111/511111111111111111111111/web.mp4`,
-            },
-            {
-              type: 'video',
-              tag: 'mobile',
-              url: `${process.env.STATIC_URL_BASE}/videos/5ffdf41a1ee2c62111111111/511111111111111111111111/mobile.mp4`,
-            },
-          ],
-        },
-      ],
-    });
+    const answers = response.body.data.mentor.answers.filter(
+      (a: any) => a.transcript !== ''
+    );
+    expect(answers).to.eql([
+      {
+        transcript: 'Test Transcript',
+        media: [
+          {
+            type: 'video',
+            tag: 'web',
+            url: `${process.env.STATIC_URL_BASE}/videos/5ffdf41a1ee2c62111111111/511111111111111111111117/web.mp4`,
+          },
+          {
+            type: 'video',
+            tag: 'mobile',
+            url: `${process.env.STATIC_URL_BASE}/videos/5ffdf41a1ee2c62111111111/511111111111111111111117/mobile.mp4`,
+          },
+        ],
+      },
+      {
+        transcript: '[being still]',
+        media: [
+          {
+            type: 'video',
+            tag: 'web',
+            url: `${process.env.STATIC_URL_BASE}/videos/5ffdf41a1ee2c62111111111/511111111111111111111111/web.mp4`,
+          },
+          {
+            type: 'video',
+            tag: 'mobile',
+            url: `${process.env.STATIC_URL_BASE}/videos/5ffdf41a1ee2c62111111111/511111111111111111111111/mobile.mp4`,
+          },
+        ],
+      },
+    ]);
   });
 
   it('can get mentor by mentorId', async () => {

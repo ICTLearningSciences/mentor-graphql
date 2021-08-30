@@ -176,9 +176,7 @@ describe('updateAnswer', () => {
             answers {
               transcript
               status
-              question {
-                _id
-              }
+              question
             }
           }
       }`,
@@ -186,7 +184,7 @@ describe('updateAnswer', () => {
     expect(r2.status).to.equal(200);
     expect(r2.body.data.mentor.isDirty).to.eql(true);
     const updatedAnswer = r2.body.data.mentor.answers.find(
-      (a: any) => a.question._id === questionId
+      (a: any) => a.question === questionId
     );
     expect(updatedAnswer).to.have.property(
       'transcript',

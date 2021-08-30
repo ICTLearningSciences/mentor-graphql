@@ -89,7 +89,7 @@ export const SubjectSchema = new Schema<Subject, SubjectModel>(
   {
     name: { type: String },
     description: { type: String },
-    isRequired: { type: Boolean },
+    isRequired: { type: Boolean, default: false },
     categories: { type: [CategorySchema] },
     topics: { type: [TopicSchema] },
     questions: { type: [SubjectQuestionSchema] },
@@ -147,8 +147,8 @@ SubjectSchema.statics.getQuestions = async function (
   }
   return sQuestions.map((sq) => ({
     question: questions.find((q) => `${q._id}` === `${sq.question}`),
-    category: subject.categories.find((c) => c.id === sq.category),
-    topics: subject.topics.filter((t) => sq.topics.includes(t.id)),
+    topics: sq.topics,
+    category: sq.category,
   }));
 };
 

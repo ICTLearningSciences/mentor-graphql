@@ -141,25 +141,21 @@ describe('uploadAnswer', () => {
                 tag
                 url
               }
-              question {
-                _id
-              }
+              question
             }
           }
       }`,
       });
     expect(r2.status).to.equal(200);
     const updatedAnswer = r2.body.data.mentor.answers.find(
-      (a: any) => a.question._id === '511111111111111111111112'
+      (a: any) => a.question === '511111111111111111111112'
     );
     expect(updatedAnswer).to.eql({
       transcript:
         "My name is Clint Anderson and I'm a Nuclear Electrician's Mate",
       status: 'COMPLETE',
       media: [],
-      question: {
-        _id: '511111111111111111111112',
-      },
+      question: '511111111111111111111112',
     });
   });
 
@@ -201,16 +197,14 @@ describe('uploadAnswer', () => {
                 tag
                 url
               }
-              question {
-                _id
-              }
+              question
             }
           }
       }`,
       });
     expect(r2.status).to.equal(200);
     const updatedAnswer = r2.body.data.mentor.answers.find(
-      (a: any) => a.question._id === '511111111111111111111112'
+      (a: any) => a.question === '511111111111111111111112'
     );
     expect(updatedAnswer).to.eql({
       transcript:
@@ -223,9 +217,7 @@ describe('uploadAnswer', () => {
           url: `${process.env.STATIC_URL_BASE}/video.mp4`,
         },
       ],
-      question: {
-        _id: '511111111111111111111112',
-      },
+      question: '511111111111111111111112',
     });
   });
 

@@ -75,12 +75,8 @@ describe('subject', () => {
               name
             }
             questions(mentor: "") {
-              category {
-                name
-              }
-              topics {
-                name
-              }
+              category
+              topics
               question {
                 question
               }
@@ -108,43 +104,27 @@ describe('subject', () => {
           question: 'Who are you and what do you do?',
         },
         category: null,
-        topics: [
-          {
-            name: 'Background',
-          },
-        ],
+        topics: ['background'],
       },
       {
         question: {
           question: 'How old are you?',
         },
-        category: {
-          name: 'Category',
-        },
-        topics: [
-          {
-            name: 'Background',
-          },
-        ],
+        category: 'category',
+        topics: ['background'],
       },
       {
         question: {
           question: 'Do you like your job?',
         },
         category: null,
-        topics: [
-          {
-            name: 'Advice',
-          },
-        ],
+        topics: ['advice'],
       },
       {
         question: {
           question: 'What is Aaron like?',
         },
-        category: {
-          name: 'Category',
-        },
+        category: 'category',
         topics: [],
       },
     ]);
@@ -163,12 +143,8 @@ describe('subject', () => {
               name
             }
             questions(mentor: "5ffdf41a1ee2c62111111112") {
-              category {
-                name
-              }
-              topics {
-                name
-              }
+              category
+              topics
               question {
                 question
               }
@@ -196,35 +172,21 @@ describe('subject', () => {
           question: 'Who are you and what do you do?',
         },
         category: null,
-        topics: [
-          {
-            name: 'Background',
-          },
-        ],
+        topics: ['background'],
       },
       {
         question: {
           question: 'How old are you?',
         },
-        category: {
-          name: 'Category',
-        },
-        topics: [
-          {
-            name: 'Background',
-          },
-        ],
+        category: 'category',
+        topics: ['background'],
       },
       {
         question: {
           question: 'Do you like your job?',
         },
         category: null,
-        topics: [
-          {
-            name: 'Advice',
-          },
-        ],
+        topics: ['advice'],
       },
       {
         question: {
@@ -237,9 +199,7 @@ describe('subject', () => {
         question: {
           question: 'What is Aaron like?',
         },
-        category: {
-          name: 'Category',
-        },
+        category: 'category',
         topics: [],
       },
     ]);

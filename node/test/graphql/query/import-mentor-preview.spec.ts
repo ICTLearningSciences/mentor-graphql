@@ -158,7 +158,7 @@ describe('import mentor preview', () => {
         },
         {
           importData: null,
-          curData: { name: 'Background' },
+          curData: 'background',
           editType: 'REMOVED',
         },
       ],

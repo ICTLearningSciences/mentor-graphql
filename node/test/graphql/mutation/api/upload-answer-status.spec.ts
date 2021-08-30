@@ -150,13 +150,8 @@ describe('uploadTaskUpdate', () => {
         query: `query {
             me {
               uploadTasks {
-                mentor {
-                  _id
-                }
-                question {
-                  _id
-                  question
-                }
+                mentor
+                question
                 uploadStatus
                 transcript
                 media {
@@ -171,13 +166,8 @@ describe('uploadTaskUpdate', () => {
     expect(response.status).to.equal(200);
     expect(response.body.data.me.uploadTasks).to.eql([
       {
-        mentor: {
-          _id: '5ffdf41a1ee2c62111111111',
-        },
-        question: {
-          _id: '511111111111111111111112',
-          question: 'Who are you and what do you do?',
-        },
+        mentor: '5ffdf41a1ee2c62111111111',
+        question: '511111111111111111111112',
         uploadStatus: 'DONE',
         transcript: 'My name is Clinton Anderson',
         media: [
@@ -219,13 +209,8 @@ describe('uploadTaskUpdate', () => {
         query: `query {
             me {
               uploadTasks {
-                mentor {
-                  _id
-                }
-                question {
-                  _id
-                  question
-                }
+                mentor
+                question
                 uploadStatus
                 transcript
                 media {
@@ -240,25 +225,15 @@ describe('uploadTaskUpdate', () => {
     expect(response.status).to.equal(200);
     expect(response.body.data.me.uploadTasks).to.eql([
       {
-        mentor: {
-          _id: '5ffdf41a1ee2c62111111111',
-        },
-        question: {
-          _id: '511111111111111111111112',
-          question: 'Who are you and what do you do?',
-        },
+        mentor: '5ffdf41a1ee2c62111111111',
+        question: '511111111111111111111112',
         uploadStatus: 'TRANSCRIBE_IN_PROGRESS',
         transcript: null,
         media: [],
       },
       {
-        mentor: {
-          _id: '5ffdf41a1ee2c62111111111',
-        },
-        question: {
-          _id: '511111111111111111111113',
-          question: 'How old are you?',
-        },
+        mentor: '5ffdf41a1ee2c62111111111',
+        question: '511111111111111111111113',
         uploadStatus: 'TRANSCRIBE_IN_PROGRESS',
         transcript: null,
         media: [],

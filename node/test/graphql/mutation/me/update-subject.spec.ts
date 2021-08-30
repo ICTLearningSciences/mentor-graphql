@@ -74,7 +74,7 @@ describe('updateSubject', () => {
       ],
       topics: [
         {
-          id: '5ffdf41a1ee2c62320b49ec3',
+          id: 'advice',
           name: 'Advice',
           description: 'updated description?',
         },
@@ -90,25 +90,14 @@ describe('updateSubject', () => {
             _id: '511111111111111111111113',
             question: 'How old are you?',
           },
-          category: { id: 'newcategory' },
-          topics: [
-            {
-              id: 'newtopic',
-            },
-            {
-              id: '5ffdf41a1ee2c62320b49ec3',
-            },
-          ],
+          category: 'newcategory',
+          topics: ['newtopic', 'advice'],
         },
         {
           question: {
             question: 'new question',
           },
-          topics: [
-            {
-              id: '5ffdf41a1ee2c62320b49ec3',
-            },
-          ],
+          topics: ['advice'],
         },
       ],
     }).replace(/"([^"]+)":/g, '$1:');
@@ -136,14 +125,8 @@ describe('updateSubject', () => {
                 question {
                   question
                 }
-                category {
-                  id
-                  name
-                }
-                topics {
-                  id
-                  name
-                }
+                category
+                topics
               }
             }
           }
@@ -163,7 +146,7 @@ describe('updateSubject', () => {
       ],
       topics: [
         {
-          id: '5ffdf41a1ee2c62320b49ec3',
+          id: 'advice',
           name: 'Advice',
           description: 'updated description?',
         },
@@ -178,30 +161,13 @@ describe('updateSubject', () => {
           question: {
             question: 'How old are you?',
           },
-          category: {
-            id: 'newcategory',
-            name: 'New category',
-          },
-          topics: [
-            {
-              id: '5ffdf41a1ee2c62320b49ec3',
-              name: 'Advice',
-            },
-            {
-              id: 'newtopic',
-              name: 'New topic',
-            },
-          ],
+          category: 'newcategory',
+          topics: ['newtopic', 'advice'],
         },
         {
           question: { question: 'new question' },
           category: null,
-          topics: [
-            {
-              id: '5ffdf41a1ee2c62320b49ec3',
-              name: 'Advice',
-            },
-          ],
+          topics: ['advice'],
         },
       ],
     });
@@ -218,12 +184,7 @@ describe('updateSubject', () => {
           question: {
             question: 'new question',
           },
-          topics: [
-            {
-              // shouldn't add this one (id not in subject topics list)
-              id: '5ffdf41a1ee2c62320b49ec3',
-            },
-          ],
+          topics: ['advice'], // shouldn't add this one (id not in subject topics list)
         },
         // shouldn't add this one (empty question)
         {
@@ -257,14 +218,8 @@ describe('updateSubject', () => {
                 question {
                   question
                 }
-                category {
-                  id
-                  name
-                }
-                topics {
-                  id
-                  name
-                }
+                category
+                topics
               }
             }
           }
@@ -314,14 +269,8 @@ describe('updateSubject', () => {
                 question {
                   question
                 }
-                category {
-                  id
-                  name
-                }
-                topics {
-                  id
-                  name
-                }
+                category
+                topics
               }
             }
           }

@@ -37,9 +37,9 @@ export const TopicType = new GraphQLObjectType({
 export const SubjectQuestionType = new GraphQLObjectType({
   name: 'SubjectQuestion',
   fields: {
-    category: { type: CategoryType },
-    topics: { type: GraphQLList(TopicType) },
     question: { type: QuestionType },
+    category: { type: GraphQLString },
+    topics: { type: GraphQLList(GraphQLString) },
   },
 });
 

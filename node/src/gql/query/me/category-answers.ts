@@ -7,7 +7,11 @@ The full terms of this copyright and license should always be found in the root 
 
 import { Types } from 'mongoose';
 import { User } from 'models/User';
-import { Mentor as MentorModel } from 'models';
+import {
+  Mentor as MentorModel,
+  Answer as AnswerModel,
+  Question as QuestionModel,
+} from 'models';
 import { GraphQLList, GraphQLObjectType, GraphQLString } from 'graphql';
 import { Status } from 'models/Answer';
 
@@ -28,27 +32,39 @@ export const categoryAnswers = {
     _: GraphQLObjectType,
     args: { category: string },
     context: { user: User }
-  ) => {
+  ): Promise<{ answerText: string; questionText: string }[]> => {
     if (!context.user) {
       throw new Error('Only authenticated users');
     }
     const mentor = await MentorModel.findOne({
       user: Types.ObjectId(`${context.user._id}`),
     });
-    const answers = await MentorModel.getAnswers({
-      mentor: mentor,
-      status: Status.COMPLETE,
-      categoryId: args.category,
+    const subjects = await MentorModel.getSubjects(mentor);
+    const sQuestions = subjects
+      .reduce((accumulator, subject) => {
+        return accumulator.concat(subject.questions);
+      }, [])
+      .filter((sq) => sq.category === args.category);
+    const questionIds = sQuestions.map((sq) => sq.question);
+    const questions = await QuestionModel.find({
+      _id: { $in: questionIds },
     });
-    const questions = await MentorModel.getQuestions({
-      mentor: mentor,
-      categoryId: args.category,
+    const answers = await AnswerModel.find({
+      mentor: mentor._id,
+      question: { $in: questionIds },
+      status: Status.COMPLETE,
+    });
+    answers.sort((a, b) => {
+      return (
+        questionIds.indexOf(a.question._id) -
+        questionIds.indexOf(b.question._id)
+      );
     });
     return answers.map((a) => {
       return {
         questionText: questions.find(
-          (q) => JSON.stringify(q.question._id) == JSON.stringify(a.question)
-        )?.question.question,
+          (q) => JSON.stringify(q._id) == JSON.stringify(a.question)
+        )?.question,
         answerText: a.transcript,
       };
     });

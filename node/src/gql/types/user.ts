@@ -5,10 +5,8 @@ Permission to use, copy, modify, and distribute this software and its documentat
 The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 */
 import { GraphQLString, GraphQLObjectType, GraphQLID } from 'graphql';
-import { Mentor as MentorModel } from 'models';
-import { User } from 'models/User';
 import { DateType } from './date';
-import MentorType from './mentor';
+
 export const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
@@ -17,12 +15,7 @@ export const UserType = new GraphQLObjectType({
     email: { type: GraphQLString },
     userRole: { type: GraphQLString },
     lastLoginAt: { type: DateType },
-    defaultMentor: {
-      type: MentorType,
-      resolve: async (user: User) => {
-        return MentorModel.findOne({ user: user._id });
-      },
-    },
+    defaultMentor: { type: GraphQLID },
   }),
 });
 

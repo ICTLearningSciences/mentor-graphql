@@ -12,20 +12,15 @@ import {
   GraphQLBoolean,
 } from 'graphql';
 import { Mentor as MentorModel } from 'models';
-import { Status } from 'models/Answer';
 import { Mentor } from 'models/Mentor';
 import DateType from './date';
 import AnswerType from './answer';
-import SubjectType, { SubjectQuestionType, TopicType } from './subject';
-import { QuestionType } from 'models/Question';
+import SubjectType from './subject';
 import { toAbsoluteUrl } from 'utils/static-urls';
 
 export const MentorType = new GraphQLObjectType({
   name: 'Mentor',
   fields: () => ({
-    createdAt: { type: DateType },
-    updatedAt: { type: DateType },
-
     _id: { type: GraphQLID },
     name: { type: GraphQLString },
     firstName: { type: GraphQLString },
@@ -35,7 +30,9 @@ export const MentorType = new GraphQLObjectType({
     lastTrainedAt: { type: DateType },
     isDirty: { type: GraphQLBoolean },
     mentorType: { type: GraphQLString },
-    defaultSubject: { type: SubjectType },
+    defaultSubject: { type: GraphQLID },
+    createdAt: { type: DateType },
+    updatedAt: { type: DateType },
     thumbnail: {
       type: GraphQLString,
       resolve: function (mentor: Mentor) {
@@ -48,87 +45,10 @@ export const MentorType = new GraphQLObjectType({
         return await MentorModel.getSubjects(mentor);
       },
     },
-    topics: {
-      type: GraphQLList(TopicType),
-      args: {
-        subject: { type: GraphQLID },
-        useDefaultSubject: { type: GraphQLBoolean },
-      },
-      resolve: async function (
-        mentor: Mentor,
-        args: { subject: string; useDefaultSubject: boolean }
-      ) {
-        return await MentorModel.getTopics({
-          mentor: mentor,
-          defaultSubject: args.useDefaultSubject,
-          subjectId: args.subject,
-        });
-      },
-    },
-    questions: {
-      type: GraphQLList(SubjectQuestionType),
-      args: {
-        useDefaultSubject: { type: GraphQLBoolean },
-        subject: { type: GraphQLID },
-        topic: { type: GraphQLID },
-        type: { type: GraphQLString },
-      },
-      resolve: async function (
-        mentor: Mentor,
-        args: {
-          useDefaultSubject: boolean;
-          subject: string;
-          topic: string;
-          type: string;
-        }
-      ) {
-        return await MentorModel.getQuestions({
-          mentor: mentor,
-          defaultSubject: args.useDefaultSubject,
-          subjectId: args.subject,
-          topicId: args.topic,
-          type: args.type as QuestionType,
-        });
-      },
-    },
     answers: {
       type: GraphQLList(AnswerType),
-      args: {
-        useDefaultSubject: { type: GraphQLBoolean },
-        subject: { type: GraphQLID },
-        topic: { type: GraphQLID },
-        status: { type: GraphQLString },
-      },
-      resolve: async function (
-        mentor: Mentor,
-        args: {
-          useDefaultSubject: boolean;
-          subject: string;
-          topic: string;
-          status: string;
-        }
-      ) {
-        return await MentorModel.getAnswers({
-          mentor: mentor,
-          defaultSubject: args.useDefaultSubject,
-          subjectId: args.subject,
-          topicId: args.topic,
-          status: args.status as Status,
-        });
-      },
-    },
-    utterances: {
-      type: GraphQLList(AnswerType),
-      args: {
-        status: { type: GraphQLString },
-      },
-      resolve: async function (mentor: Mentor, args: { status: string }) {
-        return await MentorModel.getAnswers({
-          mentor: mentor,
-          defaultSubject: false,
-          status: args.status as Status,
-          type: QuestionType.UTTERANCE,
-        });
+      resolve: async function (mentor: Mentor) {
+        return await MentorModel.getAnswers(mentor);
       },
     },
   }),

@@ -81,7 +81,7 @@ module.exports = {
       categories: [],
       topics: [
         {
-          id: ObjectId('5ffdf41a1ee2c62320b49ec1'),
+          id: 'idle',
           name: 'Idle',
           description: '30-second idle clip',
         },
@@ -89,7 +89,7 @@ module.exports = {
       questions: [
         {
           question: ObjectId('511111111111111111111111'),
-          topics: [ObjectId('5ffdf41a1ee2c62320b49ec1')],
+          topics: ['idle'],
         },
       ],
     },
@@ -108,13 +108,13 @@ module.exports = {
       ],
       topics: [
         {
-          id: ObjectId('5ffdf41a1ee2c62320b49ec2'),
+          id: 'background',
           name: 'Background',
           description:
             'These questions will ask general questions about your background, that might be relevant to how people understand your career',
         },
         {
-          id: ObjectId('5ffdf41a1ee2c62320b49ec3'),
+          id: 'advice',
           name: 'Advice',
           description:
             'These questions will ask you to give advice to someone who is interested in your career',
@@ -123,16 +123,16 @@ module.exports = {
       questions: [
         {
           question: ObjectId('511111111111111111111112'),
-          topics: [ObjectId('5ffdf41a1ee2c62320b49ec2')],
+          topics: ['background'],
         },
         {
           question: ObjectId('511111111111111111111113'),
           category: 'category',
-          topics: [ObjectId('5ffdf41a1ee2c62320b49ec2')],
+          topics: ['background'],
         },
         {
           question: ObjectId('511111111111111111111114'),
-          topics: [ObjectId('5ffdf41a1ee2c62320b49ec3')],
+          topics: ['advice'],
         },
         {
           question: ObjectId('511111111111111111111116'),
@@ -150,13 +150,13 @@ module.exports = {
       categories: [],
       topics: [
         {
-          id: ObjectId('5ffdf41a1ee2c62320b49ec3'),
+          id: 'advice',
           name: 'Advice',
           description:
             'These questions will ask you to give advice to someone who is interested in your career',
         },
       ],
-      questions: [ObjectId('511111111111111111111115')],
+      questions: [{ question: ObjectId('511111111111111111111115') }],
     },
   ],
 

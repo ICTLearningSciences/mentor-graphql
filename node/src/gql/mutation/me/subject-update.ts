@@ -56,16 +56,16 @@ export const TopicInputType = new GraphQLInputObjectType({
 
 export interface SubjectQuestionUpdateInput {
   question: QuestionUpdateInput;
-  category?: CategoryUpdateInput;
-  topics?: TopicUpdateInput[];
+  category?: string;
+  topics?: string[];
 }
 
 export const SubjectQuestionInputType = new GraphQLInputObjectType({
   name: 'SubjectQuestionInputType',
   fields: () => ({
     question: { type: QuestionUpdateInputType },
-    category: { type: CategoryInputType },
-    topics: { type: GraphQLList(TopicInputType) },
+    category: { type: GraphQLString },
+    topics: { type: GraphQLList(GraphQLString) },
   }),
 });
 
@@ -107,12 +107,9 @@ export async function questionInputToUpdate(
   );
   return {
     question: q._id,
-    category: input.category?.id,
+    category: input.category,
     // don't include topics that are not in the subject
-    topics:
-      input.topics
-        ?.filter((t) => subjectTopics.includes(t.id))
-        .map((t) => t.id) || [],
+    topics: input.topics?.filter((t) => subjectTopics.includes(t)) || [],
   };
 }
 

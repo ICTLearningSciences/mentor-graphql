@@ -126,13 +126,8 @@ describe('uploadTaskDelete', () => {
         query: `query {
             me {
               uploadTasks {
-                mentor {
-                  _id
-                }
-                question {
-                  _id
-                  question
-                }
+                mentor
+                question
                 uploadStatus
                 transcript
                 media {

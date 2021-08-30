@@ -37,9 +37,7 @@ describe('query users', () => {
                 name
                 email
                 userRole
-                defaultMentor{
-                  _id
-                }
+                defaultMentor
               }
             }
             pageInfo {
