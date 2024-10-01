@@ -9,8 +9,10 @@ import mongoUnit from 'mongo-unit';
 import path from 'path';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
-
+import sinon from 'sinon';
 import * as app from 'app';
+import { DecodedIdToken } from 'firebase-admin/auth';
+import * as helpers from '../src/gql/middleware-helpers';
 
 export function fixturePath(p: string): string {
   return path.join(__dirname, 'fixtures', p);
@@ -55,10 +57,41 @@ export function getToken(userId: string, expiresIn?: number): string {
   const expirationDate = new Date(Date.now() + expiresIn * 1000);
   const accessToken = jwt.sign(
     { id: userId, expirationDate },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET || '',
     { expiresIn: expirationDate.getTime() - new Date().getTime() }
   );
   return accessToken;
+}
+
+export async function getFirebaseToken(
+  user: Partial<DecodedIdToken>
+): Promise<string> {
+  const emptyToken: DecodedIdToken = {
+    uid: '',
+    aud: '',
+    auth_time: 0,
+    user_id: '',
+    sub: '',
+    iat: 0,
+    exp: 0,
+    email: '',
+    email_verified: false,
+    firebase: {
+      sign_in_provider: '',
+      identities: {},
+    },
+    iss: '',
+  };
+  sinon.restore();
+  sinon.stub(helpers, 'getFirebaseUserFromReqAccessToken').returns(
+    new Promise((resolve) =>
+      resolve({
+        ...emptyToken,
+        ...user,
+      })
+    )
+  );
+  return 'token';
 }
 
 export const USER_DEFAULT = '5ffdf41a1ee2c62320b49ea1';

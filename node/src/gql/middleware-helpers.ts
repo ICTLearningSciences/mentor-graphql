@@ -4,34 +4,25 @@ Permission to use, copy, modify, and distribute this software and its documentat
 
 The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 */
-import { GraphQLObjectType } from 'graphql';
-import api from './api';
-import me from './me';
-import login from './login';
-import loginGoogle from './login-google';
-import logout from './logout';
-import updateMentorTraining from './update-mentor-training';
-import userQuestionCreate from './userQuestion-create';
-import userQuestionSetFeedback from './userQuestion-setFeedback';
-import userQuestionSetAnswer from './userQuestion-setAnswer';
-import mentorPreviewed from './mentor-previewed';
-import refreshAccessToken from './refresh-access-token';
-import loginFirebase from './login-firebase';
+import { firebaseApp } from '../app';
+import { DecodedIdToken, getAuth } from 'firebase-admin/auth';
 
-export default new GraphQLObjectType({
-  name: 'Mutation',
-  fields: {
-    api,
-    me,
-    login,
-    loginGoogle,
-    logout,
-    updateMentorTraining,
-    userQuestionCreate,
-    userQuestionSetFeedback,
-    userQuestionSetAnswer,
-    mentorPreviewed,
-    refreshAccessToken,
-    loginFirebase,
-  },
-});
+export async function getFirebaseUserFromReqAccessToken(
+  authHeader: string
+): Promise<DecodedIdToken | undefined> {
+  if (!authHeader) {
+    return undefined;
+  }
+  const auth = getAuth(firebaseApp);
+  const token = authHeader.split(' ')[1];
+  if (!token) {
+    return undefined;
+  }
+  try {
+    const decodedToken = await auth.verifyIdToken(token);
+    return decodedToken;
+  } catch (e) {
+    console.error(e);
+    return undefined;
+  }
+}

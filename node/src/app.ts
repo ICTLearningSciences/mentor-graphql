@@ -17,6 +17,17 @@ import * as Sentry from '@sentry/serverless';
 import { logger } from './utils/logging';
 import requireEnv from './utils/require-env';
 import { User as UserSchema } from './models';
+import { initializeApp } from 'firebase-admin/app';
+import * as admin from 'firebase-admin';
+const firebaseServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT;
+const serviceAccount = JSON.parse(firebaseServiceAccount || '{}');
+
+const isInTest = typeof global.it === 'function';
+export const firebaseApp = isInTest
+  ? undefined
+  : initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
 
 const CORS_ORIGIN = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',')

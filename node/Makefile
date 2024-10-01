@@ -96,6 +96,10 @@ test-lint: node_modules/eslint
 test-types: node_modules/typescript
 	npm run test:types
 
+.PHONY:-audit
+test-audit:
+	npm run test:audit
+
 .PHONY: license-deploy
 license-deploy: node_modules/license-check-and-add
 	LICENSE_CONFIG=${LICENSE_CONFIG} npm run license:deploy

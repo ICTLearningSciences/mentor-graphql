@@ -36,6 +36,7 @@ export const FirstTimeTrackingSchema = new Schema<FirstTimeTracking>({
 });
 
 export interface User extends Document {
+  firebaseId: string;
   googleId: string;
   name: string;
   email: string;
@@ -48,6 +49,7 @@ export interface User extends Document {
 
 export const UserSchema = new Schema<User, UserModel>(
   {
+    firebaseId: { type: String },
     googleId: { type: String },
     name: { type: String },
     email: { type: String },

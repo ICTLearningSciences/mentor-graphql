@@ -115,6 +115,7 @@ module.exports = {
     {
       _id: ObjectId('5ffdf41a1ee2c62320b49ea9'),
       googleId: 'someidtest',
+      firebaseId: '5ffdf1231ee2c62320b49e99',
       name: 'somenametest',
       email: 'xtest@y.com',
       mentorIds: ['5ffdf41a1ee2c62119991114'],

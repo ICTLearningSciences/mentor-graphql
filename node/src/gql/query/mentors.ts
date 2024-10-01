@@ -20,10 +20,13 @@ export const mentors = findAll({
     paginationResults: PaginatedResolveResult,
     context: { user: User; org: Organization }
   ) => {
+    console.log(JSON.stringify(paginationResults, null, 2));
     const mentors: Mentor[] = paginationResults.results;
+    console.log(JSON.stringify(mentors, null, 2));
     const newMentorList = mentors.filter((m) =>
       canViewMentor(m, context.user, context.org)
     );
+    console.log(JSON.stringify(newMentorList, null, 2));
     return {
       ...paginationResults,
       results: newMentorList,

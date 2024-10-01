@@ -121,6 +121,7 @@ provider:
     NOTIFY_ADMIN_EMAILS_LIST: ${ssm:/mentorpal/shared/notify_admin_emails_list}
     CONCURRENT_LAMBDAS: ${self:custom.stages.${self:provider.stage}.CONCURRENT_LAMBDAS}
     MONGO_CONNECTION_POOL_MAX: ${self:custom.stages.${self:provider.stage}.MONGO_CONNECTION_POOL_MAX}
+    FIREBASE_SERVICE_ACCOUNT: ${ssm:/mentorpal/shared/FIREBASE_SERVICE_ACCOUNT}
 
   stackTags:
     Environment: ${self:provider.stage}

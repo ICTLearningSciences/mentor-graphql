@@ -12,6 +12,7 @@ import { User } from '../models/User';
 import OrganizationModel, { Organization } from '../models/Organization';
 import { getRefreshedToken } from './types/user-access-token';
 import { logger } from '../utils/logging';
+import { getFirebaseUserFromReqAccessToken } from './middleware-helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const extensions = ({ context }: any) => {
@@ -72,7 +73,9 @@ async function refreshToken(
 }
 
 export default graphqlHTTP((req: Request, res: Response) => {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
+    const authHeader = req.headers.authorization;
+    const firebaseUser = await getFirebaseUserFromReqAccessToken(authHeader);
     const next = (user: User, org: Organization, newToken = '') => {
       resolve({
         schema,
@@ -80,6 +83,7 @@ export default graphqlHTTP((req: Request, res: Response) => {
           graphiql: { headerEditorEnabled: true },
         }),
         context: {
+          firebaseUser: firebaseUser || null,
           user: user || null,
           org: org || null,
           newToken: newToken || '',

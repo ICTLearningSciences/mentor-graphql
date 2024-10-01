@@ -8,11 +8,18 @@ import dotenv from 'dotenv';
 import { appStop } from 'app';
 import { logger } from 'utils/logging';
 import mongoUnit from 'mongo-unit';
-import { fixturePath } from './helpers';
+import { fixturePath, getFirebaseToken } from './helpers';
+import * as sinon from 'sinon';
 
-before(() => {
+before(async () => {
   dotenv.config({ path: fixturePath('.env') });
   process.env.DOTENV_PATH = fixturePath('.env');
+});
+
+beforeEach(async () => {
+  await getFirebaseToken({
+    uid: '5ffdf1231ee2c62320b49e99',
+  });
 });
 
 after(async () => {
@@ -31,4 +38,8 @@ after(async () => {
 mongoUnit.start().then((url) => {
   process.env.MONGO_URI = url; // this const process.env.DATABASE_URL = will keep link to fake mongo
   run(); // this line start mocha tests
+});
+
+afterEach(async () => {
+  sinon.restore();
 });
